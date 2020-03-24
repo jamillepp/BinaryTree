@@ -50,12 +50,8 @@ class Node:
 
 		level.matrix[self.depth].append( self.value )
 
-
-
-
-
-
 class Tree:
+
 	root = None #Raiz.
 	nodes = None #Quantidade de nós.
 	height = None #Altura da árvore.
@@ -66,8 +62,8 @@ class Tree:
 		self.nodes = 0
 		self.height = -1
 
-	def Push(self, item ):
-		
+	def Push(self, item ): # Aparentemente Pronto
+
 		if( self.height == -1 ): # Se estiver vazia
 		
 			(self.root).value = item
@@ -191,13 +187,33 @@ class Tree:
 				inte -= cont
 				cont -= 2
 
-	
+	def Search(self,item):
 
+		node = self.root
+
+		while( not(node.right == None and node.left == None) and node.value != item):
+			print(node.value)
+			if( item < node.value ):
+				node = node.left
+			elif( item > node.value ):
+				node = node.right
+		else:
+			if(node.value == item):
+				print('Encontrado')
+				return True
+			elif(node.right == None and node.left == None):
+				print('Não encontrado')
+				return False
+
+
+
+	
+# Criação da ávore
 
 tree = Tree()
 
 tree.Push(8)
-# tree.Push(4)
+tree.Push(4)
 tree.Push(12)
 tree.Push(2)
 tree.Push(6)
@@ -213,4 +229,8 @@ tree.Push(6)
 # tree.Push(15)
 tree.ShowInfo()
 
+print(tree.level)
+
 tree.Show()
+
+print(tree.level.matrix)
