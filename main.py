@@ -16,10 +16,10 @@ class Node:
 
 	def CleanNone(self, level, heightTree):
 
-		if( self.depth > (len( level.matrix ) - 1) ):
+		# if( self.depth > (len( level.matrix ) - 1) ):
 
-			while( (len( level.matrix ) - 1) != self.depth ):
-				level.matrix.append( [] )
+		# 	while( (len( level.matrix ) - 1) != self.depth ):
+		# 		level.matrix.append( [] )
 
 		if( self.value != '-' and self.depth != heightTree):
 			if( (self.left != None or self.right != None) ):
@@ -30,9 +30,11 @@ class Node:
 					self.left = newNode
 
 				if( self.right == None ):
+
 					depth = self.depth + 1
 					newNode = Node( '-', None, None, depth)
 					self.right = newNode
+					level.matrix[depth].append( newNode.value )
 
 				self.left.CleanNone( level, heightTree )
 				self.right.CleanNone( level, heightTree )
@@ -46,9 +48,12 @@ class Node:
 
 				self.left.CleanNone( level, heightTree )
 				self.right.CleanNone( level, heightTree )
+
+				level.matrix[depth].append( '-' )
+				level.matrix[depth].append( '-' )
 				
 
-		level.matrix[self.depth].append( self.value )
+		# level.matrix[self.depth].append( self.value )
 
 class Tree:
 
@@ -61,16 +66,18 @@ class Tree:
 		self.root = Node( None, None, None, 0 )
 		self.nodes = 0
 		self.height = -1
+		self.level = Level()
 
 	def Push(self, item ): # Aparentemente Pronto
-
+	
 		if( self.height == -1 ): # Se estiver vazia
 		
 			(self.root).value = item
 			self.height+= 1
 			self.nodes += 1
 
-			self.level.append( [self.root.value] )
+			self.level.matrix.append( [self.root.value] )
+			self.root.CleanNone( self.level, self.height )
 	
 		else:
 		
@@ -86,36 +93,54 @@ class Tree:
 				
 					nodeDepth+= 1
 
-					if( nodeDepth > (len( self.level ) - 1) ):
-						while( (len( self.level ) - 1) != nodeDepth ):
-							self.level.append( [] )
+					if( nodeDepth > (len( self.level.matrix ) - 1) ):
+						while( (len( self.level.matrix ) - 1) != nodeDepth ):
+							self.level.matrix.append( [] )
 
 					newItem.depth = nodeDepth
+
+					if( i.left != None and i.left.value == '-' and (self.level.matrix[ nodeDepth ][0] == '-' or self.level.matrix[ nodeDepth ][1] == None)):
+
+						self.level.matrix[ nodeDepth ].pop()
+						self.level.matrix[ nodeDepth ].append( newItem.value )
+
 					i.left = newItem
 					self.nodes += 1
 					push = True
-					self.level[ nodeDepth ].append( newItem.value )
+
+					self.level.matrix[ nodeDepth ].append( newItem.value )
+
 					if( self.height < nodeDepth ):
 					
 						self.height = nodeDepth
+
+					self.root.CleanNone( self.level, self.height )
 				
 			
 				elif ( (i.right == None or i.right.value == '-') and item > i.value ):
 				
 					nodeDepth+= 1
 
-					if( nodeDepth > (len( self.level ) - 1) ):
-						while( (len( self.level ) - 1) != nodeDepth ):
-							self.level.append( [] )
+					if( nodeDepth > (len( self.level.matrix ) - 1) ):
+						while( (len( self.level.matrix ) - 1) != nodeDepth ):
+							self.level.matrix.append( [] )
 
 					newItem.depth = nodeDepth
+
+					if ( i.right != None and i.right.value == '-' and (self.level.matrix[ nodeDepth ][1] == '-' or self.level.matrix[ nodeDepth ][1] == None)):
+
+						self.level.matrix[ nodeDepth ].pop()
+						self.level.matrix[ nodeDepth ].append( newItem.value )
+
 					i.right = newItem
 					self.nodes+= 1
 					push = True
-					self.level[ nodeDepth ].append( newItem.value )
+
 					if( self.height < nodeDepth ):
 					
 						self.height = nodeDepth
+
+					self.root.CleanNone( self.level, self.height )
 				
 			
 				#Enquanto não encontrar um nó vazio para colocar o item novo:
@@ -124,18 +149,18 @@ class Tree:
 					i = i.right
 					nodeDepth+= 1
 
-					if( nodeDepth > (len( self.level ) - 1) ):
-						while( (len( self.level ) - 1) != nodeDepth ):
-							self.level.append( [] )
+					if( nodeDepth > (len( self.level.matrix ) - 1) ):
+						while( (len( self.level.matrix ) - 1) != nodeDepth ):
+							self.level.matrix.append( [] )
 			
 				elif( item < i.value ):
 				
 					i = i.left
 					nodeDepth+= 1
 
-					if( nodeDepth > (len( self.level ) - 1) ):
-						while( (len( self.level ) - 1) != nodeDepth ):
-							self.level.append( [] )
+					if( nodeDepth > (len( self.level.matrix ) - 1) ):
+						while( (len( self.level.matrix ) - 1) != nodeDepth ):
+							self.level.matrix.append( [] )
 		
 			
 
@@ -150,7 +175,6 @@ class Tree:
 
 	def Show(self): # Precisa de ajustes na nos espaços que separam nos itens
 		
-		self.level = Level()
 
 		self.root.CleanNone( self.level, self.height ) # Limpar nós vazios e trocar por '-' (questão estética)
 
@@ -200,7 +224,7 @@ class Tree:
 		else:
 			if(node.value == item):
 				print('Encontrado')
-				return True
+				return node
 			elif(node.right == None and node.left == None):
 				print('Não encontrado')
 				return False
@@ -229,7 +253,7 @@ tree.Push(6)
 # tree.Push(15)
 tree.ShowInfo()
 
-print(tree.level)
+print(tree.level.matrix)
 
 tree.Show()
 
