@@ -4,14 +4,16 @@ class Level:
 class Node:
 
 	value = None #Valor.
+	father = None # Pai
 	right = None #Filho direito.
 	left = None #Filho esquerdo.
 	depth = None #Profundiade em relação à raiz.
 
-	def __init__(self, value, right, left, depth):
+	def __init__(self, value, father, right, left, depth):
 		self.value = value
-		self.left = left
+		self.father = father
 		self.right = right
+		self.left = left
 		self.depth = depth
 
 	def MakeLevel( self, level, niv ): # Cria uma matriz que contém os valore em casa nível da árvore
@@ -41,8 +43,8 @@ class Tree:
 	level = [] # Matriz com os valores em cada nível
 	
 	def __init__(self):
-		NoneItem = Node( None, None, None, 1 )
-		self.root = Node( None, NoneItem, NoneItem, 0 )
+		NoneItem = Node( None, None, None, None, 1 )
+		self.root = Node( None, NoneItem, NoneItem, NoneItem, 0 )
 		self.nodes = 0
 		self.height = -1
 
@@ -62,8 +64,9 @@ class Tree:
 
 			while( push == False ):
 
-				NoneItem = Node( None,None, None, 0 )
-				newItem = Node( item, NoneItem, NoneItem, 0 )
+				father = i
+				NoneItem = Node( None, None, None, None, 0 )
+				newItem = Node( item, father, NoneItem, NoneItem, 0 )
 
 				if( i.left.value == None and item < i.value ):
 				
@@ -156,7 +159,7 @@ class Tree:
 				inte -= cont
 				cont -= 2
 
-	def Search(self,item):
+	def Search(self,item): # Pronto
 
 		node = self.root
 
@@ -171,7 +174,15 @@ class Tree:
 			elif(node.right.value == None and node.left.value == None):
 				print('Não encontrado')
 				return False
-	
+
+	def Delet(self,item):
+
+		item = self.Search(item)
+
+		print( item.father.value )
+
+
+
 # Criação da árvore
 
 tree = Tree()
@@ -183,8 +194,9 @@ tree.Push(2)
 tree.Push(8)
 tree.Push(7)
 tree.Push(9)
-tree.Push(10)
 
 tree.Show()
+
+tree.Delet(7)
 
 tree.ShowInfo()
