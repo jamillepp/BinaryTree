@@ -110,14 +110,21 @@ class Tree:
 				nodeDepth+= 1
 		
 	def ShowInfo(self): # Pronto
+	
+		if( self.height == -1 ):
+			print('\nÁRVORE VAZIA')
+			return False
 
 		print("\nINFORMAÇÕES:\n")
-	
+			
 		print((self.root).value, " (ROOT)")
 		print( self.height,  " (HEIGHT)")
 		print( self.nodes, " (NODES)")
 
 	def Show(self): # Precisa de ajustes na nos espaços que separam nos itens ( Se ela tem height > 2 )
+
+		if( self.height == -1 ):
+			return False
 
 		self.level = Level()
 		self.level.matrix = []		
@@ -162,6 +169,9 @@ class Tree:
 
 	def Search(self,item): # Pronto
 
+		if( self.height == -1 ):
+			return False
+
 		node = self.root
 
 		while( not(node.right.value == None and node.left.value == None) and node.value != item):
@@ -178,10 +188,22 @@ class Tree:
 
 	def Delet(self,item):
 
+		if( self.height == -1 ):
+			return False
+
 		NoneItem = Node( None, None, None, None, 0 )
 		item = self.Search(item)
 
-		if( item.right.value == None and item.left.value == None ): # Se for uma folha
+		if( item.depth == 0 ):
+
+			if( item.right.value == None and item.left.value == None ):
+				self.root = None
+				self.height = -1
+				self.nodes = 0
+				print('\n-----------------------')
+				print('\nITEM {} FOI DELETADO:'.format(item.value))
+
+		elif( item.right.value == None and item.left.value == None ): # Se for uma folha
 
 			if( item.value > item.father.value ):
 
@@ -230,3 +252,6 @@ tree.Delet(7)
 tree.Delet(9)
 tree.Delet(4)
 tree.Delet(2)
+tree.Delet(3)
+tree.Delet(8)
+tree.Delet(5)
