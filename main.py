@@ -35,6 +35,25 @@ class Node:
 			self.left.MakeLevel( level, niv )
 			self.right.MakeLevel( level, niv )
 
+	def Inorder( self, root, a ):
+
+		if( self.value == root.value ):
+			self.right.Inorder( root, a )
+
+		elif( self.right.value != None or self.left != None ):
+
+			if( self.left.value != None ):
+				a = self.left
+				self.left.Inorder( root, a )
+			elif( self.right.value != None ):
+				a = self.right
+				self.right.Inorder( root, a )
+			else:
+				
+				return a
+
+
+
 class Tree:
 
 	root = None #Raiz.
@@ -194,16 +213,7 @@ class Tree:
 		NoneItem = Node( None, None, None, None, 0 )
 		item = self.Search(item)
 
-		if( item.depth == 0 ):
-
-			if( item.right.value == None and item.left.value == None ):
-				self.root = None
-				self.height = -1
-				self.nodes = 0
-				print('\n-----------------------')
-				print('\nITEM {} FOI DELETADO:'.format(item.value))
-
-		elif( item.right.value == None and item.left.value == None ): # Se for uma folha
+		if( item.right.value == None and item.left.value == None ): # Se for uma folha
 
 			if( item.value > item.father.value ):
 
@@ -220,6 +230,64 @@ class Tree:
 				print('\n-----------------------')
 				print('\nITEM {} FOI DELETADO:'.format(item.value))
 				self.Show()
+
+		elif(  item.right.value == None or item.left.value == None ): # Se tiver Apenas um filho
+
+				if( item.right.value == None ):
+
+					if( item.father.left == item ): # L-L
+
+						item.father.left = item.left
+						item.left.father = item.father
+						self.nodes -= 1
+						print('\n-----------------------')
+						print('\nITEM {} FOI DELETADO:'.format(item.value))
+						self.Show()
+
+					elif( item.father.right == item ): # R-L
+
+						item.father.right = item.left
+						item.left.father = item.father
+						self.nodes -= 1
+						print('\n-----------------------')
+						print('\nITEM {} FOI DELETADO:'.format(item.value))
+						self.Show()
+
+				elif( item.left.value == None ):
+
+					if( item.father.left == item ): # L-R
+
+						item.father.left = item.right
+						item.right.father = item.father
+						self.nodes -= 1
+						print('\n-----------------------')
+						print('\nITEM {} FOI DELETADO:'.format(item.value))
+						self.Show()
+
+					elif( item.father.right == item ): # R-R
+
+						item.father.right = item.right
+						item.right.father = item.father
+						self.nodes -= 1
+						print('\n-----------------------')
+						print('\nITEM {} FOI DELETADO:'.format(item.value))
+						self.Show()
+
+		else: # Se tiver dois filhos
+
+			successor = item.Inorder( item, None )
+
+			print( successor.value )
+
+			# item.right.father = successor
+			# item.left.father = successor
+
+			# if( successor.value < successor.father.value ):
+
+			# 	successor.father.left = NoneItem
+
+			# else:
+			# 	successor.father.right = NoneItem
 
 		for i in range(  len(self.level.matrix[ self.height ]) ) :
 
@@ -248,10 +316,13 @@ tree.Push(9)
 
 tree.Show()
 
-tree.Delet(7)
-tree.Delet(9)
-tree.Delet(4)
-tree.Delet(2)
-tree.Delet(3)
-tree.Delet(8)
+# tree.root.Inorder( tree.root, None )
+
 tree.Delet(5)
+# tree.Delet(8)
+# tree.Delet(7)
+
+# tree.Push(9)
+# tree.Push(8)
+
+# tree.Show()
